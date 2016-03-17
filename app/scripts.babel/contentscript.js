@@ -1,3 +1,10 @@
 'use strict';
 
-console.log('\'Allo \'Allo! Content script');
+console.log('Mint transaction exporter extension running');
+
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    console.dir(sender);
+    console.dir(request.getJsonDataRequest);
+  }
+);

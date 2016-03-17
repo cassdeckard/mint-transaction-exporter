@@ -8,12 +8,10 @@ chrome.tabs.onUpdated.addListener(tabId => {
   chrome.pageAction.hide(tabId);
 });
 
-chrome.webRequest.onCompleted.addListener(function(details) {
-  console.dir(details);
+function onGetJsonData(requestInfo) {
+  console.dir(requestInfo);
+  chrome.tabs.sendMessage(requestInfo.tabId, {getJsonDataRequest: requestInfo});
+  chrome.pageAction.show(requestInfo.tabId);
+}
 
-  chrome.pageAction.show(details.tabId);
-}, {
-  urls: [
-    'https://wwws.mint.com/app/getJsonData.xevent*'
-  ]
-});
+chrome.webRequest.onCompleted.addListener(onGetJsonData, { urls: ['https://wwws.mint.com/app/getJsonData.xevent*']});
