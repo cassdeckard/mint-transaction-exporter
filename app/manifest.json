@@ -1,8 +1,8 @@
 {
-  "name": "__MSG_appName__",
+  "name": "Mint Transaction Exporter",
   "version": "0.0.1",
   "manifest_version": 2,
-  "description": "__MSG_appDescription__",
+  "description": "Helper for exporting Mint transactions",
   "icons": {
     "16": "images/icon-16.png",
     "128": "images/icon-128.png"
@@ -36,7 +36,7 @@
       "19": "images/icon-19.png",
       "38": "images/icon-38.png"
     },
-    "default_title": "chrome extension demo",
+    "default_title": "Mint Transaction Exporter",
     "default_popup": "popup.html"
   }
 }
