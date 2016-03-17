@@ -1,7 +1,20 @@
 'use strict';
 
+function messageTab(tab, message, callback) {
+  chrome.tabs.sendMessage(tab.id, message, callback);
+}
+
+function messageCurrentTab(message, callback) {
+  chrome.tabs.query({
+    active: true,
+    currentWindow: true
+  }, tabs => messageTab(tabs[0], message, callback));
+}
+
 function doExport() {
-  console.log('USER WANTS TO DO THE EXPORT');
+  messageCurrentTab({doExport: true}, function (x) {
+    console.dir(x);
+  })
 }
 
 document.addEventListener('DOMContentLoaded', function() {
