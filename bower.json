@@ -2,7 +2,9 @@
   "name": "chrome-extension-demo",
   "private": true,
   "version": "0.0.0",
-  "dependencies": {},
+  "dependencies": {
+    "prosperity-ofx": "http://registry.npmjs.org/prosperity-ofx/-/prosperity-ofx-0.0.2.tgz"
+  },
   "devDependencies": {
     "chai": "~3.5.0",
     "mocha": "~2.4.5"
