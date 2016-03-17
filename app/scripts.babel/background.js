@@ -9,7 +9,6 @@ chrome.tabs.onUpdated.addListener(tabId => {
 });
 
 function onGetJsonData(requestInfo) {
-  console.dir(requestInfo);
   chrome.tabs.sendMessage(requestInfo.tabId, {getJsonDataRequest: requestInfo});
   chrome.pageAction.show(requestInfo.tabId);
 }
