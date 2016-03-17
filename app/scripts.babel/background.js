@@ -5,11 +5,13 @@ chrome.runtime.onInstalled.addListener(details => {
 });
 
 chrome.tabs.onUpdated.addListener(tabId => {
-  chrome.pageAction.show(tabId);
+  chrome.pageAction.hide(tabId);
 });
 
 chrome.webRequest.onCompleted.addListener(function(details) {
   console.dir(details);
+
+  chrome.pageAction.show(details.tabId);
 }, {
   urls: [
     'https://wwws.mint.com/app/getJsonData.xevent*'
