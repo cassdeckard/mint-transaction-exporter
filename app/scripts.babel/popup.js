@@ -1,3 +1,9 @@
 'use strict';
 
-console.log('\'Allo \'Allo! Popup');
+function doExport() {
+  console.log('USER WANTS TO DO THE EXPORT');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('export-confirm').addEventListener('click', doExport);
+});
