@@ -2,7 +2,9 @@
   "name": "Mint Transaction Exporter",
   "version": "0.0.1",
   "manifest_version": 2,
+  "default_locale": "en",
   "description": "Helper for exporting Mint transactions",
+  "author": "Matt Deckard",
   "icons": {
     "16": "images/icon-16.png",
     "128": "images/icon-128.png"
