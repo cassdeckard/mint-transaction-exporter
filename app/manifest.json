@@ -16,14 +16,13 @@
   },
   "permissions": [
     "tabs",
-    "http://*/*",
-    "https://*/*"
+    "webRequest",
+    "https://*.mint.com/"
   ],
   "content_scripts": [
     {
       "matches": [
-        "http://*/*",
-        "https://*/*"
+        "https://wwws.mint.com/transaction.event*"
       ],
       "js": [
         "scripts/contentscript.js"
