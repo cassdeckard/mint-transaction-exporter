@@ -24,7 +24,7 @@
   "content_scripts": [
     {
       "matches": [
-        "https://wwws.mint.com/transaction.event*"
+        "https://wwws.mint.com/*"
       ],
       "js": [
         "scripts/contentscript.js"
