@@ -16,27 +16,20 @@ function resendLastRequest() {
 function exportResponse(response) {
   var transactionData = response.set[0].data;
 
-  function reduceUniques(prev, cur) {
-    return (prev.indexOf(cur) < 0) ? prev.concat([cur]) : prev;
-  }
-
-  function byAccountName(accountName) {
-    return ((datum) => datum.account === accountName);
-  }
-
   var mapTransaction = ((transaction) => ({
     id: 'TODO'
   }));
 
-  function mapAccount(accountName) {
-    return {
-      accountName: accountName,
-      transactions: transactionData.filter(byAccountName(accountName)).map(mapTransaction)
-    };
-  }
+  var mapAccount = ((accountName) => ({
+    accountName: accountName,
+    transactions: transactionData.filter((datum) => datum.account === accountName).map(mapTransaction)
+  }));
+
+  var reduceUniques = ((prev, cur) =>
+    (prev.indexOf(cur) < 0) ? prev.concat([cur]) : prev
+  );
 
   var accounts = transactionData.map((transaction) => transaction.account).reduce(reduceUniques, []);
-
   var groupedTransactions = accounts.map(mapAccount);
   console.dir(groupedTransactions);
 }
