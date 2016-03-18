@@ -14,35 +14,28 @@ function resendLastRequest() {
 }
 
 function exportResponse(response) {
-  console.dir(response);
-
   var transactionData = response.set[0].data;
-  console.dir(transactionData);
 
-  function valueGetter(valueName) {
-    return function (object) { return object[valueName]; };
-  }
   function reduceUniques(prev, cur) {
     return (prev.indexOf(cur) < 0) ? prev.concat([cur]) : prev;
   }
-  function accountFilter(accountName) {
-    return function (datum) {
-      return datum.account == accountName;
-    };
-  }
-  function mapTransaction(transaction) {
-    return {
 
-    };
+  function byAccountName(accountName) {
+    return ((datum) => datum.account === accountName);
   }
+
+  var mapTransaction = ((transaction) => ({
+    id: 'TODO'
+  }));
+
   function mapAccount(accountName) {
     return {
       accountName: accountName,
-      transactions: transactionData.filter(accountFilter(accountName)).map(mapTransaction)
+      transactions: transactionData.filter(byAccountName(accountName)).map(mapTransaction)
     };
   }
 
-  var accounts = transactionData.map(valueGetter('account')).reduce(reduceUniques, []);
+  var accounts = transactionData.map((transaction) => transaction.account).reduce(reduceUniques, []);
 
   var groupedTransactions = accounts.map(mapAccount);
   console.dir(groupedTransactions);
