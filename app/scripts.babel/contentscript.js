@@ -16,9 +16,8 @@ function resendLastRequest() {
 function exportResponse(response) {
   var transactionData = response.set[0].data;
 
-  var mapTransaction = ((transaction) => ({
-    id: 'TODO'
-  }));
+  // For now just return the full transaction, no mapping
+  var mapTransaction = ((transaction) => transaction);
 
   var mapAccount = ((accountName) => ({
     accountName: accountName,
