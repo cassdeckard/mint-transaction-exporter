@@ -16,8 +16,14 @@ function resendLastRequest() {
 function exportResponse(response) {
   var transactionData = response.set[0].data;
 
-  // For now just return the full transaction, no mapping
-  var mapTransaction = ((transaction) => transaction);
+  var mapTransaction = ((transaction) => ({
+    date: transaction.date,
+    amount: parseFloat(transaction.amount.replace(/[$,]/g, '')) * (transaction.isDebit ? -1 : 1),
+    payee: transaction.merchant,
+    memo: transaction.omerchant,
+    category: transaction.category,
+    fullTransaction: transaction
+  }));
 
   var mapAccount = ((accountName) => ({
     accountName: accountName,
