@@ -47,5 +47,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     })
     return;
   }
-  lastJsonDataRequest = message.getJsonDataRequest ? message.getJsonDataRequest : lastJsonDataRequest;
+  if (message.getJsonDataRequest) {
+    lastJsonDataRequest = message.getJsonDataRequest.url.includes('task=transaction') ?
+      message.getJsonDataRequest :
+      lastJsonDataRequest;
+  }
 });
