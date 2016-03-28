@@ -13,11 +13,19 @@ function resendLastRequest() {
   });
 }
 
+function formatDate(dateStr) {
+  if (dateStr.includes('/')) {
+    return dateStr;
+  }
+  var date = new Date(dateStr + ' ' + new Date().getFullYear());
+  return (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
+}
+
 function exportResponse(response) {
   var transactionData = response.set[0].data;
 
   var mapTransaction = ((transaction) => ({
-    date: transaction.date,
+    date: formatDate(transaction.date),
     amount: parseFloat(transaction.amount.replace(/[$,]/g, '')) * (transaction.isDebit ? -1 : 1),
     payee: transaction.merchant,
     memo: transaction.omerchant,
