@@ -1,5 +1,7 @@
 'use strict';
 
+var qif = require('qif');
+
 console.log('Mint transaction exporter extension running');
 
 var lastJsonDataRequest = undefined;
@@ -45,6 +47,15 @@ function exportResponse(response) {
   var accounts = transactionData.map((transaction) => transaction.account).reduce(reduceUniques, []);
   var groupedTransactions = accounts.map(mapAccount);
   console.dir(groupedTransactions);
+
+  var qifFiles = groupedTransactions.map(convertToQif);
+}
+
+function convertToQif(account) {
+  return {
+    accountName: account.accountName,
+    qifContent: qif.write({ cash: account.transactions })
+  }
 }
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
