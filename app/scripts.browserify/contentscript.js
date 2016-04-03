@@ -28,6 +28,10 @@ function formatDate(dateStr) {
 function exportResponse(response) {
   var transactionData = response.set[0].data;
 
+  function filterPending(transaction) {
+    return !transaction.isPending;
+  }
+
   var mapTransaction = function mapTransaction(transaction) {
     return {
       date: formatDate(transaction.date),
@@ -44,7 +48,7 @@ function exportResponse(response) {
       accountName: accountName,
       transactions: transactionData.filter(function (datum) {
         return datum.account === accountName;
-      }).map(mapTransaction)
+      }).filter(filterPending).map(mapTransaction)
     };
   };
 
