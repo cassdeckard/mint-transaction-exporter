@@ -27,7 +27,7 @@
         "https://wwws.mint.com/*"
       ],
       "js": [
-        "contentscript-bundle.js"
+        "scripts/contentscript-bundle.js"
       ],
       "run_at": "document_end",
       "all_frames": false

@@ -1,11 +1,22 @@
 // generated on 2016-03-17 using generator-chrome-extension 0.5.4
 import gulp from 'gulp';
+import gutil from 'gulp-util';
 import gulpLoadPlugins from 'gulp-load-plugins';
 import del from 'del';
 import runSequence from 'run-sequence';
 import {stream as wiredep} from 'wiredep';
+import browserify from 'browserify';
+import watchify from 'watchify';
+import assign from 'lodash.assign';
+import source from 'vinyl-source-stream';
 
 const $ = gulpLoadPlugins();
+const customOpts = {
+  entries: ['./app/scripts.browserify/contentscript.js'],
+  debug: true
+}
+const opts = assign({}, watchify.args, customOpts);
+const bundler = watchify(browserify(opts));
 
 gulp.task('extras', () => {
   return gulp.src([
@@ -27,6 +38,17 @@ function lint(files, options) {
       .pipe($.eslint.format());
   };
 }
+
+function bundle() {
+  return bundler.bundle()
+    .on('error', gutil.log.bind(gutil, 'Watchify Error'))
+    .pipe(source('contentscript-bundle.js'))
+    .pipe(gulp.dest('./app/scripts'));
+}
+
+gulp.task('bundle', bundle);
+bundler.on('update', bundle);
+bundler.on('log', gutil.log);
 
 gulp.task('lint', lint('app/scripts.babel/**/*.js', {
   env: {
@@ -101,6 +123,7 @@ gulp.task('watch', ['lint', 'babel', 'html'], () => {
   ]).on('change', $.livereload.reload);
 
   gulp.watch('app/scripts.babel/**/*.js', ['lint', 'babel']);
+  gulp.watch('app/scripts.browserify/**/*.js', ['lint', 'bundle']);
   gulp.watch('bower.json', ['wiredep']);
 });
 
