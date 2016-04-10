@@ -32,7 +32,7 @@ function exportResponse(response) {
     return !transaction.isPending;
   }
 
-  var mapTransaction = function mapTransaction(transaction) {
+  var mapTransaction = function (transaction) {
     return {
       date: formatDate(transaction.date),
       amount: parseFloat(transaction.amount.replace(/[$,]/g, '')) * (transaction.isDebit ? -1 : 1),
@@ -43,7 +43,7 @@ function exportResponse(response) {
     };
   };
 
-  var mapAccount = function mapAccount(accountName) {
+  var mapAccount = function (accountName) {
     return {
       accountName: accountName,
       transactions: transactionData.filter(function (datum) {
