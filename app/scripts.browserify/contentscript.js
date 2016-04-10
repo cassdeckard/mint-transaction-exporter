@@ -66,7 +66,7 @@ function exportResponse(response) {
     a.href = window.URL.createObjectURL(blob);
     a.download = blobFilename;
     a.appendChild(document.createTextNode('Download ' + blobFilename));
-    
+
     return a;
   };
 
@@ -80,7 +80,9 @@ function exportResponse(response) {
   var links = qifFiles.map(qifToBlobLink);
   var resultsDiv = document.getElementById('results');
   links.forEach(link => {
-    resultsDiv.appendChild(link);
+    var p = document.createElement('p');
+    p.appendChild(link);
+    resultsDiv.appendChild(p);
   });
 }
 
