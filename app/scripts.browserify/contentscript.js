@@ -1,6 +1,8 @@
 'use strict';
 
 var qif = require('qif');
+var JSZip = require('jszip');
+var filesaver = require('filesaverjs');
 
 console.log('Mint transaction exporter extension running');
 
@@ -56,34 +58,22 @@ function exportResponse(response) {
     return prev.indexOf(cur) < 0 ? prev.concat([cur]) : prev;
   };
 
-  var qifToBlobLink = function (qifFile) {
-    var blobContent = [qifFile.qifContent];
-    var blobProperties = { type: 'application.qif' };
-    var blobFilename = qifFile.accountName + '.qif';
-    var blob = new Blob(blobContent, blobProperties);
-
-    var a = document.createElement('a');
-    a.href = window.URL.createObjectURL(blob);
-    a.download = blobFilename;
-    a.appendChild(document.createTextNode('Download ' + blobFilename));
-
-    return a;
-  };
-
   var accounts = transactionData.map(function (transaction) {
     return transaction.account;
   }).reduce(reduceUniques, []);
-  var groupedTransactions = accounts.map(mapAccount);
-  console.dir(groupedTransactions);
 
-  var qifFiles = groupedTransactions.map(convertToQif);
-  var links = qifFiles.map(qifToBlobLink);
-  var resultsDiv = document.getElementById('results');
-  links.forEach(link => {
-    var p = document.createElement('p');
-    p.appendChild(link);
-    resultsDiv.appendChild(p);
+  var qifFiles = accounts.map(mapAccount).map(convertToQif);
+
+  filesaver.saveAs(createZip(qifFiles).generate({ type: 'blob' }), 'mint-transactions.zip');
+}
+
+function createZip(qifFiles) {
+  var zip = new JSZip();
+  qifFiles.forEach(qifFile => {
+    var blobFilename = qifFile.accountName + '.qif';
+    zip.file(blobFilename, qifFile.qifContent);
   });
+  return zip;
 }
 
 function convertToQif(account) {
