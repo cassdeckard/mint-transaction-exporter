@@ -1,5 +1,5 @@
 {
-  "name": "chrome-extension-demo",
+  "name": "mint-transaction-exporter",
   "private": true,
   "engines": {
     "node": ">=0.8.0"
