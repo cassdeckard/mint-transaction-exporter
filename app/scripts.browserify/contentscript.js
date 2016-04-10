@@ -56,6 +56,20 @@ function exportResponse(response) {
     return prev.indexOf(cur) < 0 ? prev.concat([cur]) : prev;
   };
 
+  var qifToBlobLink = function (qifFile) {
+    var blobContent = [qifFile.qifContent];
+    var blobProperties = { type: 'application.qif' };
+    var blobFilename = qifFile.accountName + '.qif';
+    var blob = new Blob(blobContent, blobProperties);
+
+    var a = document.createElement('a');
+    a.href = window.URL.createObjectURL(blob);
+    a.download = blobFilename;
+    a.appendChild(document.createTextNode('Download ' + blobFilename));
+    
+    return a;
+  };
+
   var accounts = transactionData.map(function (transaction) {
     return transaction.account;
   }).reduce(reduceUniques, []);
@@ -63,6 +77,11 @@ function exportResponse(response) {
   console.dir(groupedTransactions);
 
   var qifFiles = groupedTransactions.map(convertToQif);
+  var links = qifFiles.map(qifToBlobLink);
+  var resultsDiv = document.getElementById('results');
+  links.forEach(link => {
+    resultsDiv.appendChild(link);
+  });
 }
 
 function convertToQif(account) {
