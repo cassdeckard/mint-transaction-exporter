@@ -6,19 +6,6 @@ var filesaver = require('filesaverjs');
 
 console.log('Mint transaction exporter extension running');
 
-var lastJsonDataRequest = undefined;;
-
-function resendLastRequest() {
-  return new Promise(function (resolve, reject) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', lastJsonDataRequest.url);
-    xhr.onload = function (xhrEvent) {
-      return resolve(JSON.parse(xhrEvent.target.response));
-    };
-    xhr.send();;
-  });
-}
-
 function formatDate(dateStr) {
   if (dateStr.includes('/')) {
     return dateStr;
@@ -64,7 +51,21 @@ function exportResponse(response) {
 
   var qifFiles = accounts.map(mapAccount).map(convertToQif);
 
-  filesaver.saveAs(createZip(qifFiles).generate({ type: 'blob' }), 'mint-transactions.zip');
+  return createZip(qifFiles).generate({ type: 'blob' });
+}
+
+function downloadZip(zip) {
+  filesaver.saveAs(zip, 'mint-transactions.zip');
+}
+
+function addDownloadLink(zip) {
+  var resultsDiv = document.getElementById('results');
+  var p = document.createElement('p');
+  var a = document.createElement('a');
+  a.appendChild(document.createTextNode('Export as QIF'));
+  a.onclick = (e => downloadZip(zip));
+  p.appendChild(a);
+  resultsDiv.appendChild(p);
 }
 
 function createZip(qifFiles) {
@@ -83,22 +84,24 @@ function convertToQif(account) {
   };
 }
 
-function doExport() {
-  console.log('User requested export');
-  resendLastRequest().then(function (response) {
-    exportResponse(response);
+function resendRequest(request) {
+  return new Promise(function (resolve, reject) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', request.url);
+    xhr.onload = function (xhrEvent) {
+      return resolve(JSON.parse(xhrEvent.target.response));
+    };
+    xhr.send();
   });
 }
 
-function getJsonDataRequest(data) {
-  lastJsonDataRequest = message.getJsonDataRequest.url.includes('task=transaction') ? message.getJsonDataRequest : lastJsonDataRequest;
+function getJsonDataRequest(request) {
+  if (request.url.includes('task=transaction')) {
+    resendRequest(request).then(response => addDownloadLink(exportResponse(response)));
+  }
 }
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-  if (message.doExport) {
-    doExport();
-    return;
-  }
   if (message.getJsonDataRequest) {
     getJsonDataRequest(message.getJsonDataRequest);
   }
