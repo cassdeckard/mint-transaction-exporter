@@ -87,7 +87,7 @@ function convertToQif(account) {
 function resendRequest(request) {
   return new Promise(function (resolve, reject) {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', request.url);
+    xhr.open('GET', request.url + '&mte-resend');
     xhr.onload = function (xhrEvent) {
       return resolve(JSON.parse(xhrEvent.target.response));
     };
@@ -96,7 +96,8 @@ function resendRequest(request) {
 }
 
 function getJsonDataRequest(request) {
-  if (request.url.includes('task=transaction')) {
+  if (request.url.includes('task=transaction') &&
+      !request.url.includes('mte-resend')) {
     resendRequest(request).then(response => addDownloadLink(exportResponse(response)));
   }
 }
