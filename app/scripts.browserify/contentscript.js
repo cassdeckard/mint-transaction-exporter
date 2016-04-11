@@ -50,20 +50,16 @@ function exportResponse(response) {
   }).reduce(reduceUniques, []);
 
   var qifFiles = accounts.map(mapAccount).map(convertToQif);
-
-  return createZip(qifFiles).generate({ type: 'blob' });
-}
-
-function downloadZip(zip) {
+  var zip = createZip(qifFiles).generate({ type: 'blob' });
   filesaver.saveAs(zip, 'mint-transactions.zip');
 }
 
-function addDownloadLink(zip) {
+function addDownloadLink(response) {
   var resultsDiv = document.getElementById('results');
   var p = document.createElement('p');
   var a = document.createElement('a');
   a.appendChild(document.createTextNode('Export as QIF'));
-  a.onclick = (e => downloadZip(zip));
+  a.onclick = (e => exportResponse(response));
   p.appendChild(a);
   resultsDiv.appendChild(p);
 }
@@ -98,7 +94,7 @@ function resendRequest(request) {
 function getJsonDataRequest(request) {
   if (request.url.includes('task=transaction') &&
       !request.url.includes('mte-resend')) {
-    resendRequest(request).then(response => addDownloadLink(exportResponse(response)));
+    resendRequest(request).then(addDownloadLink);
   }
 }
 
