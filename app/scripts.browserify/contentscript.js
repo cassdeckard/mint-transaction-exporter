@@ -83,15 +83,23 @@ function convertToQif(account) {
   };
 }
 
+function doExport() {
+  console.log('User requested export');
+  resendLastRequest().then(function (response) {
+    exportResponse(response);
+  });
+}
+
+function getJsonDataRequest(data) {
+  lastJsonDataRequest = message.getJsonDataRequest.url.includes('task=transaction') ? message.getJsonDataRequest : lastJsonDataRequest;
+}
+
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.doExport) {
-    console.log('User requested export');
-    resendLastRequest().then(function (response) {
-      exportResponse(response);
-    });
+    doExport();
     return;
   }
   if (message.getJsonDataRequest) {
-    lastJsonDataRequest = message.getJsonDataRequest.url.includes('task=transaction') ? message.getJsonDataRequest : lastJsonDataRequest;
+    getJsonDataRequest(message.getJsonDataRequest);
   }
 });
