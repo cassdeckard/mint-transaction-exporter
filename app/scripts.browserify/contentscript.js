@@ -6,19 +6,6 @@ var filesaver = require('filesaverjs');
 
 console.log('Mint transaction exporter extension running');
 
-var lastJsonDataRequest = undefined;;
-
-function resendLastRequest() {
-  return new Promise(function (resolve, reject) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', lastJsonDataRequest.url);
-    xhr.onload = function (xhrEvent) {
-      return resolve(JSON.parse(xhrEvent.target.response));
-    };
-    xhr.send();;
-  });
-}
-
 function formatDate(dateStr) {
   if (dateStr.includes('/')) {
     return dateStr;
@@ -63,8 +50,18 @@ function exportResponse(response) {
   }).reduce(reduceUniques, []);
 
   var qifFiles = accounts.map(mapAccount).map(convertToQif);
+  var zip = createZip(qifFiles).generate({ type: 'blob' });
+  filesaver.saveAs(zip, 'mint-transactions.zip');
+}
 
-  filesaver.saveAs(createZip(qifFiles).generate({ type: 'blob' }), 'mint-transactions.zip');
+function addDownloadLink(response) {
+  var resultsDiv = document.getElementById('results');
+  var p = document.createElement('p');
+  var a = document.createElement('a');
+  a.appendChild(document.createTextNode('Export as QIF'));
+  a.onclick = (e => exportResponse(response));
+  p.appendChild(a);
+  resultsDiv.appendChild(p);
 }
 
 function createZip(qifFiles) {
@@ -83,15 +80,26 @@ function convertToQif(account) {
   };
 }
 
-chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-  if (message.doExport) {
-    console.log('User requested export');
-    resendLastRequest().then(function (response) {
-      exportResponse(response);
-    });
-    return;
+function resendRequest(request) {
+  return new Promise(function (resolve, reject) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', request.url + '&mte-resend');
+    xhr.onload = function (xhrEvent) {
+      return resolve(JSON.parse(xhrEvent.target.response));
+    };
+    xhr.send();
+  });
+}
+
+function getJsonDataRequest(request) {
+  if (request.url.includes('task=transaction') &&
+      !request.url.includes('mte-resend')) {
+    resendRequest(request).then(addDownloadLink);
   }
+}
+
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.getJsonDataRequest) {
-    lastJsonDataRequest = message.getJsonDataRequest.url.includes('task=transaction') ? message.getJsonDataRequest : lastJsonDataRequest;
+    getJsonDataRequest(message.getJsonDataRequest);
   }
 });
