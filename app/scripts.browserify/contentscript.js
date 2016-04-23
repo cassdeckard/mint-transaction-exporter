@@ -94,10 +94,16 @@ function resendRequest(request) {
   });
 }
 
+function debug(response) {
+  console.log('Processed response:');
+  console.dir(accountsFromResponse(response));
+  return response;
+}
+
 function getJsonDataRequest(request) {
   if (request.url.includes('task=transaction') &&
       !request.url.includes('mte-resend')) {
-    resendRequest(request).then(addDownloadLink);
+    resendRequest(request).then(debug).then(addDownloadLink);
   }
 }
 
