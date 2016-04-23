@@ -14,10 +14,8 @@ function formatDate(dateStr) {
   return date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 }
 
-function exportResponse(response) {
-  var transactionData = response.set[0].data;
-
-  function filterPending(transaction) {
+function accountsFromResponse(response) {
+  var filterPending = function(transaction) {
     return !transaction.isPending;
   }
 
@@ -45,11 +43,16 @@ function exportResponse(response) {
     return prev.indexOf(cur) < 0 ? prev.concat([cur]) : prev;
   };
 
-  var accounts = transactionData.map(function (transaction) {
-    return transaction.account;
-  }).reduce(reduceUniques, []);
+  var transactionData = response.set[0].data;
 
-  var qifFiles = accounts.map(mapAccount).map(convertToQif);
+  return transactionData.map(function (transaction) {
+    return transaction.account;
+  }).reduce(reduceUniques, []).map(mapAccount);
+}
+
+function exportResponse(response) {
+  var accounts = accountsFromResponse(response);
+  var qifFiles = accounts.map(convertToQif);
   var zip = createZip(qifFiles).generate({ type: 'blob' });
   filesaver.saveAs(zip, 'mint-transactions.zip');
 }
