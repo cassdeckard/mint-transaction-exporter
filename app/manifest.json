@@ -19,12 +19,12 @@
   "permissions": [
     "tabs",
     "webRequest",
-    "https://*.mint.com/"
+    "https://*.intuit.com/"
   ],
   "content_scripts": [
     {
       "matches": [
-        "https://wwws.mint.com/*"
+        "https://mint.intuit.com/*"
       ],
       "js": [
         "scripts/contentscript-bundle.js"

@@ -13,4 +13,4 @@ function onGetJsonData(requestInfo) {
   chrome.pageAction.show(requestInfo.tabId);
 }
 
-chrome.webRequest.onCompleted.addListener(onGetJsonData, { urls: ['https://wwws.mint.com/app/getJsonData.xevent*']});
+chrome.webRequest.onCompleted.addListener(onGetJsonData, { urls: ['https://mint.intuit.com/app/getJsonData.xevent*']});
